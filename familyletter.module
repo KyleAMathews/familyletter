@@ -1,15 +1,46 @@
 <?php
 
 function familyletter_og_mailinglist_new_email_comment_alter(&$email) {
-if ($email['old']) {
-  return;
+  if ($email['familyletter_processed']) {
+    return;
+  }
+
+  // Check if this email should be stored.
+  if (db_result(db_query("SELECT nid FROM {familyletter} WHERE nid = %d", $email['nid']))) {
+    // Store the email then set it to false.
+    familyletter_store_email($email['nid'], $email);
+    $email = FALSE;
+  }
 }
-$old_email = variable_get('serialized_email', '');
-if (!empty($old_email)) {
-  $old_email['old'] = TRUE;
-  og_mailinglist_save_comment($old_email);
+
+function familyletter_store_email($nid, $email) {
+  $data = array(
+    'nid' => $nid,
+    'email' => serialize($email),
+  );
+
+  drupal_write_record("familyletter_email", $data);
 }
-variable_set('serialized_email', $email);
-  // Stop the email, just cause we're mean.
-  $email = FALSE;
+
+function familyletter_start_storing($nid) {
+  $data = array('nid' => $nid);
+  drupal_write_record('familyletter', $data);
+}
+
+function familyletter_stop_storing($nid) {
+  db_query("DELETE FROM {familyletter}
+             WHERE nid = %d", $nid);
+}
+
+function familyletter_send_stored_emails($nid) {
+  family_letter_stop_storing($nid);
+  $results = db_query("SELECT email
+                       FROM {familyletter_emails}
+                       WHERE nid = %d", $nid);
+
+  while ($data = db_fetch_array($results)) {
+    $email = unserialize($data['email']);
+    $email['familyletter_processed'] = TRUE;
+    og_mailinglist_save_comment($email);
+  }
 }
