@@ -1,0 +1,15 @@
+<?php
+
+function familyletter_og_mailinglist_new_email_comment_alter(&$email) {
+if ($email['old']) {
+  return;
+}
+$old_email = variable_get('serialized_email', '');
+if (!empty($old_email)) {
+  $old_email['old'] = TRUE;
+  og_mailinglist_save_comment($old_email);
+}
+variable_set('serialized_email', $email);
+  // Stop the email, just cause we're mean.
+  $email = FALSE;
+}

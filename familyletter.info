@@ -1,0 +1,5 @@
+name = Family Letters
+description = Collects emailed replies to a prompt email and sends all response out at the same time.
+dependencies[] = og_mailinglist
+package = "Organic groups"
+core = "6.x"
