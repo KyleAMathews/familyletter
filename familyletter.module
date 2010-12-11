@@ -19,7 +19,7 @@ function familyletter_store_email($nid, $email) {
     'email' => serialize($email),
   );
 
-  drupal_write_record("familyletter_email", $data);
+  drupal_write_record("familyletter_emails", $data);
 }
 
 function familyletter_start_storing($nid) {
@@ -33,10 +33,14 @@ function familyletter_stop_storing($nid) {
 }
 
 function familyletter_send_stored_emails($nid) {
-  family_letter_stop_storing($nid);
+  familyletter_stop_storing($nid);
   $results = db_query("SELECT email
                        FROM {familyletter_emails}
                        WHERE nid = %d", $nid);
+
+  // Delete stored emails.
+  db_query("DELETE FROM {familyletter_emails}
+             WHERE nid = %d", $nid);
 
   while ($data = db_fetch_array($results)) {
     $email = unserialize($data['email']);
