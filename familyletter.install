@@ -1,0 +1,57 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_install().
+ */
+function familyletter_install() {
+  $success = drupal_install_schema('familyletter');
+  if ($success) {
+    drupal_set_message(t('FamilyLetter has been installed'));
+  }
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function familyletter_uninstall() {
+  drupal_uninstall_schema('familyletter');
+
+  drupal_set_message(t('FamilyLetter has been uninstalled.'));
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function familyletter_schema() {
+  $schema = array();
+ 
+  $schema['familyletter_emails'] = array(
+   'fields' => array(
+     'nid' => array(
+       'description' => 'The nid the email belongs with.',
+       'type' => 'int',
+       'unsigned' => TRUE,
+       'not null' => TRUE,
+       'default' => 0),
+     'email' => array(
+       'description' => 'The serialized email array',
+       'type' => 'text',
+       'not null' => TRUE,
+       'size' => 'big',
+     ),
+   ),
+ );
+ $schema['familyletter'] = array(
+   'fields' => array(
+     'nid' => array(
+       'description' => 'An nid familyletter is tracking.',
+       'type' => 'int',
+       'unsigned' => TRUE,
+       'not null' => TRUE,
+       'default' => 0),
+   ),
+ );
+ 
+ return $schema;
+}
