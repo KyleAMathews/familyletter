@@ -1,0 +1,1 @@
+Plugin for OG Mailinglist that let's you store in the DB email comments sent to a particular node for a time before sending them all at once.
