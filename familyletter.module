@@ -34,6 +34,7 @@ function familyletter_stop_storing($nid) {
 }
 
 function familyletter_send_stored_emails($nid) {
+  module_load_include('inc', 'og_mailinglist', 'og_mailinglist_transport');
   familyletter_stop_storing($nid);
   $results = db_query("SELECT email
                        FROM {familyletter_emails}
