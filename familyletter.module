@@ -8,6 +8,7 @@ function familyletter_og_mailinglist_new_email_comment_alter(&$email) {
   // Check if this email should be stored.
   if (db_result(db_query("SELECT nid FROM {familyletter} WHERE nid = %d", $email['nid']))) {
     // Store the email then set it to false.
+    $email['familyletter_processed'] = TRUE;
     familyletter_store_email($email['nid'], $email);
     $email = FALSE;
   }
